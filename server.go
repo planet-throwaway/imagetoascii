@@ -1,7 +1,10 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 )
@@ -14,7 +17,19 @@ type AsciiResponse struct {
 	Data string `json:"data"`
 }
 
+// Set by the Makefile
+var version string
+
 func main() {
+	port := flag.Uint("port", 8080, "port to serve on (default 8080)")
+	showVersion := flag.Bool("version", false, "displays version and exits")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Printf("imagetoascii %s\n", version)
+		os.Exit(0)
+	}
+
 	e := echo.New()
 	e.POST("/", func(c echo.Context) error {
 		imageRequest := new(ImageRequest)
@@ -32,5 +47,5 @@ func main() {
 			return c.JSON(http.StatusOK, response)
 		}
 	})
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", *port)))
 }
