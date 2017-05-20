@@ -22,13 +22,14 @@ var (
 	maxImageWidth              uint = 80
 )
 
-func Convert(imageBase64 string) string {
+func Convert(imageBase64 string) (error, string) {
 	log.Print("Converting Image")
 	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(imageBase64))
 
 	m, _, err := image.Decode(reader)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Couldn't decode image %v", err)
+		return err, ""
 	}
 
 	resizedImage := resizeForAscii(m)
@@ -45,7 +46,7 @@ func Convert(imageBase64 string) string {
 		}
 		output = output + "\n"
 	}
-	return output
+	return nil, output
 }
 
 func resizeForAscii(img image.Image) image.Image {
