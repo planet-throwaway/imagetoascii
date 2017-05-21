@@ -1,6 +1,6 @@
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
-TESTABLE_PACKAGES := $(shell go list ./...)
+TESTABLE_PACKAGES := $(shell go list ./... | grep -v vendor)
 TIMESTAMP := $(shell date +%s)
 
 VERSION=0.1.0
