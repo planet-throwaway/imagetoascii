@@ -31,21 +31,23 @@ func main() {
 	}
 
 	e := echo.New()
-	e.POST("/", func(c echo.Context) error {
-		imageRequest := new(ImageRequest)
-		if err := c.Bind(imageRequest); err != nil {
-			return err
-		}
-		if imageRequest.Data == "" {
-			return echo.NewHTTPError(http.StatusBadRequest, "Expected a 'data' element")
-		}
-		err, converted := Convert(imageRequest.Data)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "Problem with the image data provided")
-		} else {
-			response := AsciiResponse{Data: converted}
-			return c.JSON(http.StatusOK, response)
-		}
-	})
+	e.POST("/toascii", imageHandler)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", *port)))
+}
+
+func imageHandler(c echo.Context) error {
+	imageRequest := new(ImageRequest)
+	if err := c.Bind(imageRequest); err != nil {
+		return err
+	}
+	if imageRequest.Data == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Expected a 'data' element")
+	}
+	err, converted := Convert(imageRequest.Data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Problem with the image data provided")
+	} else {
+		response := AsciiResponse{Data: converted}
+		return c.JSON(http.StatusOK, response)
+	}
 }

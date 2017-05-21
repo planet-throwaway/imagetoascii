@@ -15,7 +15,7 @@ import (
 
 var (
 	// Reference: http://paulbourke.net/dataformats/asciiart/
-	asciiMap     = strings.Split("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ", "")
+	asciiMap     = strings.Split("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'.  ", "")
 	maxGrayColor = 256
 	// Factor to convert 256 color bit grayscale to 70 "color" ascii
 	grayscaleToAsciiMultiplier      = 1.0 / float64(maxGrayColor) * float64(len(asciiMap)-1)
