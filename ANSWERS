@@ -1,0 +1,51 @@
+1. How would you measure the performance of your service?
+
+To measure the performance of the service, I would use a service like the
+Apache Bench (ab) tool. I've used this in the past, and I've found its simple
+enough to use, well known by other programmers (so they trust the results), and
+since I have used it before, I wouldn't need to spend a lot of time to start
+getting results. 
+
+To test it, I'd take a sample set of images (some small, some big, some with
+line art, some photos), and would see how it performs with each. It would be
+important to make sure that there are no performance issues with different
+types of data.
+
+2. What are some strategies you would employ to make your service more scalable?
+
+First of all, this service is stateless, so we have a relatively easy scaling
+story. To scale this service, I would put a load balancer (or eventually load
+balancers) in front of it. Either with something like nginx, or if deployed to
+a cloud solution like AWS, a cloud-specific load balancing solution like
+Elastic Load Balancer. Then you can add many instances of the service behind
+the load balancer, with no need to worry about coordinating state.
+
+I think a solution where you cache your computed results is unlikely to produce
+much gains in scalability, since I imagine that it is unlikely that users will
+often upload the same image multiple times, or that the different users would
+upload the same image. If you suspect that this is the case though, you could
+calculate hashes of the uploaded images and test for uniqueness, and if you do
+see that there are many duplicates, you could add a cache like Redis or
+memcached to store computed results keyed by a hash of the uploaded image. When
+a user uploads an image you could check the cache for the hash of the image,
+and if you have a match, you could return the cached ASCII image, without
+needing to recreate it.
+
+
+3. How would your design change if you needed to store the uploaded images?
+
+The service would need to have a place to store images. A reasonable choice
+would be something like Amazon S3 or Google Cloud storage. These services both
+offer reasonable pricing and I've used their APIs before. The image upload
+could be done in a goroutine.  If the user doesn't need to know the URL of the
+image, this is easy, but if they do, we can return that before the upload is
+complete, but would need to make sure our documentation explains that it may be
+a few moments before the URL is available.
+
+One consideration that you would need to make is that there is the potential
+for abuse of a service that stores images. Perhaps users would abuse the
+service and upload illegal or objectionable material. At the very least
+there should be a reporting mechanism, and if the service gets popular
+enough perhaps even pay moderators to review images or blacklist certain
+images or users.
+
