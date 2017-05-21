@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
+	middleware "github.com/labstack/echo/middleware"
 )
 
 type ImageRequest struct {
@@ -31,6 +32,7 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Use(middleware.BodyLimit("20M"))
 	e.POST("/toascii", imageHandler)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", *port)))
 }
